@@ -100,11 +100,13 @@ class MyTaskItemDelegate(WidgetDelegate):
         widget.set_thumbnail(item.icon())
         
         # set entity info:        
-        entity = sg_data.get("entity")
-        entity_name = entity.get("name")
-        entity_type = entity.get("type")
-        entity_type_icon = model.get_entity_icon(entity_type) if entity_type else None
-        widget.set_entity(entity_name, entity_type, entity_type_icon)
+        # check if entity exist, see https://support.shotgunsoftware.com/hc/en-us/requests/73918
+        if entity:
+            entity = sg_data.get("entity")
+            entity_name = entity.get("name")
+            entity_type = entity.get("type")
+            entity_type_icon = model.get_entity_icon(entity_type) if entity_type else None
+            widget.set_entity(entity_name, entity_type, entity_type_icon)
         
         # set task info:
         task_name = sg_data.get("content")
