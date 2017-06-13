@@ -78,7 +78,7 @@ class MultiWorkFiles(sgtk.platform.Application):
         # the behaviour can be very different.
         #
         # currently, we have done QA on the following engines:
-        SUPPORTED_ENGINES = ["tk-nuke", "tk-maya", "tk-3dsmax"]
+        SUPPORTED_ENGINES = ["tk-nuke", "tk-maya", "tk-3dsmax", "tk-katana"]
 
         if self.engine.has_ui and not hasattr(sgtk, "_tk_multi_workfiles2_launch_at_startup"):
 
@@ -151,7 +151,9 @@ class MultiWorkFiles(sgtk.platform.Application):
 
         :returns: An RGBA tuple.
         """
-        return sgtk.platform.qt.QtGui.QColor(self.style_constants["SG_ALERT_COLOR"]).toTuple()
+        # PyQt4 (used in Katana) don't have the QtGui.QColor.toTuple method.
+        color = sgtk.platform.qt.QtGui.QColor(self.style_constants["SG_ALERT_COLOR"])
+        return color.red(), color.green(), color.blue(), color.alpha()
 
 
 class DebugWrapperShotgun(object):
