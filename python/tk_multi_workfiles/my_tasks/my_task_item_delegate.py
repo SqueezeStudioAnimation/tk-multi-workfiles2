@@ -101,8 +101,8 @@ class MyTaskItemDelegate(WidgetDelegate):
         
         # set entity info:        
         # check if entity exist, see https://support.shotgunsoftware.com/hc/en-us/requests/73918
+        entity = sg_data.get("entity")
         if entity:
-            entity = sg_data.get("entity")
             entity_name = entity.get("name")
             entity_type = entity.get("type")
             entity_type_icon = model.get_entity_icon(entity_type) if entity_type else None
