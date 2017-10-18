@@ -112,8 +112,17 @@ class FileSaveForm(FileFormBase):
         self.window().resize(self.minimumSizeHint())
 
         # default state for the version controls is to use the next available version:
-        self._ui.use_next_available_cb.setChecked(True)
-        self._ui.version_spinner.setEnabled(False)
+
+        # HACK by rlessard@squeezestudio.com on 2017-05-25 START
+        # We modified theses values since the work/publish template use the task_name field but not the shot_alembic_cache template.
+        # This can create confusion at Ngenious since without this change, when an animation change from the 'Blocking' to 'Spline' task, the version number will restart to 1.
+
+        # self._ui.use_next_available_cb.setChecked(True)
+        # self._ui.version_spinner.setEnabled(False)
+        self._ui.use_next_available_cb.setChecked(False)
+        self._ui.version_spinner.setEnabled(True)
+
+        # HACK by rlessard@squeezestudio.com on 2017-05-25 END
 
         # hook up signals on controls:
         self._ui.cancel_btn.clicked.connect(self._on_cancel)
