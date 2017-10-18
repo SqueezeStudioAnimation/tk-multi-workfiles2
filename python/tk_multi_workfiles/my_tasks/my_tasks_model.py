@@ -48,7 +48,7 @@ class MyTasksModel(ShotgunEntityModel):
         fields.extend(self.extra_display_fields)
 
         ShotgunEntityModel.__init__(self, "Task", filters, ["content"], fields, parent,
-                                    download_thumbs=True, 
+                                    download_thumbs= False,
                                     bg_load_thumbs = True,
                                     bg_task_manager=bg_task_manager)
 
