@@ -22,27 +22,6 @@
    </property>
    <item>
     <widget class="QFrame" name="background">
-     <property name="styleSheet">
-      <string notr="true">#background {
-border-style: solid;
-border-width: 2px;
-border-radius: 2px;
-}
-
-#background[selected=false] {
-	background-color: rgb(0,0,0,0);
-	border-color: rgb(0,0,0,0);
-}
-
-#background[selected=true] {
-/*
-	background-color: rgb(135, 166, 185, 50);
-	border-color: rgb(135, 166, 185);
-*/
-	background-color: rgb(0, 178, 236, 30);
-	border-color: rgb(0, 178, 236);
-}</string>
-     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -94,50 +73,69 @@ border-radius: 2px;
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,1">
-        <property name="spacing">
-         <number>2</number>
-        </property>
-        <item>
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>&lt;b&gt;Title&lt;/b&gt;</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+       <widget class="QFrame" name="details_frame">
+        <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item>
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="ElidedLabel" name="label">
+           <property name="text">
+            <string>&lt;b&gt;Title&lt;/b&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="subtitle">
+           <property name="text">
+            <string>Subtitle</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>..framework_qtwidgets</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>

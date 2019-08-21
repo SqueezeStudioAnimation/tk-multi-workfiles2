@@ -84,7 +84,7 @@ class FileAction(Action):
                 if template_keys <= ctx_keys:
                     # we've found the longest template that contains only context fields
                     break
-                ctx_template = template.parent
+                ctx_template = ctx_template.parent
                 
             if not ctx_template:
                 # couldn't figure out the path to test so assume that we need to create folders:
@@ -119,8 +119,8 @@ class FileAction(Action):
         try:
             sgtk.platform.change_context(ctx)
         except Exception, e:
-            app.log_exception("Context change failed!")
-            raise TankError("Failed to change work area - %s" % e)
+            app.log_exception(e)
+            raise TankError("Context changed failed, see log for details.")
         finally:
             QtGui.QApplication.restoreOverrideCursor()
 

@@ -76,6 +76,21 @@ class FileWidget(QtGui.QWidget):
         self._update_ui()
     selected=property(_get_selected, _set_selected)
 
+    def _get_subtitle(self):
+        return self._ui.subtitle.text()
+
+    def _set_subtitle(self, value):
+        self._ui.subtitle.setText(value)
+    subtitle = property(_get_subtitle, _set_subtitle)
+
+    def set_show_subtitle(self, show_subtitle):
+        """
+        Set if the widget's subtitle should be displayed.
+
+        :param show_subtitle: True if the subtitle should be displayed, otherwise False
+        """
+        self._ui.subtitle.setVisible(show_subtitle)
+
     def set_is_publish(self, is_publish):
         """
         """
@@ -103,5 +118,3 @@ class FileWidget(QtGui.QWidget):
         self._ui.background.setProperty("selected", self._is_selected)
         self._ui.background.style().unpolish(self._ui.background)
         self._ui.background.ensurePolished()
-
-

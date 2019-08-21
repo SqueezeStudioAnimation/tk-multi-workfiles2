@@ -44,7 +44,7 @@ class InteractiveOpenAction(OpenFileAction):
         publish_versions = [v for v, f in self.file_versions.iteritems() if f.is_published]
         max_local_version = max(local_versions) if local_versions else None
         max_publish_version = max(publish_versions) if publish_versions else None
-        max_version = max(max_local_version, max_publish_version)
+        max_version = max(0,max_local_version, max_publish_version)
 
         if (self._publishes_visible and self.file.is_published
             and (not self._workfiles_visible or not self.file.is_local)):
@@ -236,12 +236,6 @@ class InteractiveOpenAction(OpenFileAction):
                     src_path = work_path
                     work_path = local_path
 
-        try:
-            self._app.log_metric("Open workfile")
-        except:
-            # ignore all errors. ex: using a core that doesn't support metrics
-            pass
-
         return self._do_copy_and_open(src_path, work_path, None, not file.editable, env.context, parent_ui)
 
     def _open_previous_publish(self, file, env, parent_ui):
@@ -334,15 +328,8 @@ class InteractiveOpenAction(OpenFileAction):
                 self._app.log_exception("Failed to resolve work file path from publish path: %s" % src_path)
                 return False
 
-        try:
-            self._app.log_metric("Open published file")
-        except:
-            # ignore all errors. ex: using a core that doesn't support metrics
-            pass
-
         return self._do_copy_and_open(src_path, work_path, None, not file.editable, env.context, parent_ui)
-        
-        
+
         
         
         
