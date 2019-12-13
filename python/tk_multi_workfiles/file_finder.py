@@ -283,21 +283,22 @@ class FileFinder(QtCore.QObject):
             if not file_details["modified_by"]:
                 file_details["modified_by"] = g_user_cache.get_file_last_modified_user(work_path)
 
-            # make sure all files with the same key have the same name:
-            file_details["name"] = name_map.get_name(
-                file_key, work_path, work_template, wf_fields
-            )
+            if not file_details["name"]:
+                # make sure all files with the same key have the same name:
+                file_details["name"] = name_map.get_name(
+                    file_key, work_path, work_template, wf_fields
+                )
 
             # add to the list of files
             files[(file_key, file_details["version"])] = {
                 "key": file_key,
                 "is_work_file": True,
                 "work_path": work_path,
-                "work_details": file_details
+                "work_details": file_details,
             }
-                
+
         return files
-        
+
     def _process_publish_files(self, sg_publishes, publish_template, work_template, context, name_map, 
                              version_compare_ignore_fields, filter_file_key=None):
         """
@@ -365,17 +366,20 @@ class FileFinder(QtCore.QObject):
                 file_details["modified_at"] = sg_publish.get("published_at")
                 file_details["modified_by"] = sg_publish.get("published_by")
 
-            # make sure all files with the same key have the same name:
-            file_details["name"] = name_map.get_name(file_key, publish_path, publish_template, publish_fields)
+            if not file_details["name"]:
+                # make sure all files with the same key have the same name:
+                file_details["name"] = name_map.get_name(file_key, publish_path, publish_template, publish_fields)
 
             # add new file item for this publish.  Note that we also keep track of the
             # work path even though we don't know if this publish has a corresponding
             # work file.
-            files[(file_key, file_details["version"])] = {"key":file_key, 
-                                                          "work_path":work_path,
-                                                          "is_published":True,
-                                                          "publish_path":publish_path,
-                                                          "publish_details":file_details}
+            files[(file_key, file_details["version"])] = {
+                "key": file_key,
+                "work_path": work_path,
+                "is_published": True,
+                "publish_path": publish_path,
+                "publish_details": file_details,
+            }
         return files
 
     def _find_publishes(self, publish_filters):
