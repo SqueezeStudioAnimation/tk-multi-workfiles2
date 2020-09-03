@@ -97,19 +97,23 @@ class StepListWidget(QtCore.QObject):
         """
         Retrieve all Steps from Shotgun and cache them, if they were not already
         cached. Do nothing if they were already cached.
+
+        [SQUEEZE] Added custom 'sg_status' field for steps in Shotgun. Show steps only if
+        status is active 'act'.
         """
         if cls._step_list is None:
             shotgun = sgtk.platform.current_bundle().shotgun
             sg_steps = shotgun.find(
                 "Step",
                 [],
-                ["code", "entity_type", "color"],
+                ["code", "entity_type", "color", "sg_status"],
                 order=[{"field_name": "code", "direction": "asc"}]
             )
             # Build a dictionary for indexing by the entity_type
             cls._step_list = defaultdict(list)
             for sg_step in sg_steps:
-                cls._step_list[sg_step["entity_type"]].append(sg_step)
+                if sg_step['sg_status'] == 'act':
+                    cls._step_list[sg_step["entity_type"]].append(sg_step)
 
     def select_all_steps(self, value=True):
         """
