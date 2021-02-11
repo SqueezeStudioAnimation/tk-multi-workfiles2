@@ -184,6 +184,7 @@ configuration:
       default_value:
         - [task_assignees, is, '{context.user}']
         - [milestone, is, False]
+        - [sg_status_list, is_not, dlvclt]
 
     file_extensions:
         type: list
