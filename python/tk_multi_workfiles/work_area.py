@@ -244,6 +244,10 @@ class WorkArea(object):
                              "template_work_area", "template_publish_area"]
         settings_to_find = ["saveas_default_name", "saveas_prefer_version_up",
                             "version_compare_ignore_fields", "file_extensions"]
+        ### Squeeze - Begin
+        # The hooks are resolved as part of the settings in order to extract the values as-is
+        settings_to_find.extend(["hook_template_work", "hook_template_publish"])
+        ### Squeeze - End
         resolved_settings = {}
         if self._context:
             resolved_settings = self._get_settings_for_context(self._context, templates_to_find, settings_to_find)
@@ -258,6 +262,23 @@ class WorkArea(object):
         self.work_template = resolved_settings.get("template_work")
         self.publish_area_template = resolved_settings.get("template_publish_area")
         self.publish_template = resolved_settings.get("template_publish")
+
+        ### Squeeze - Begin
+        # Allow an optional "hook_template_work" to replace the work template
+        work_template_hook = resolved_settings.get("hook_template_work")
+        if work_template_hook:
+            app = sgtk.platform.current_bundle()
+            work_template = app.execute_hook_expression(work_template_hook, None)
+            if work_template:
+                self.work_template = work_template
+        # Allow an optional "hook_template_publish" to replace the publish template
+        publish_template_hook = resolved_settings.get("hook_template_publish")
+        if publish_template_hook:
+            app = sgtk.platform.current_bundle()
+            publish_template = app.execute_hook_expression(publish_template_hook, None)
+            if publish_template:
+                self.publish_template = publish_template
+        ### Squeeze - End
 
         # update other settings:
         self.save_as_default_name = resolved_settings.get("saveas_default_name", "")

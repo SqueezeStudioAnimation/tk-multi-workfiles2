@@ -95,6 +95,18 @@ configuration:
         description: Specify a hook that will create the task and do any input validation that is
                      required.
 
+    ### Squeeze - Begin - Hook to override the work & publish templates
+    hook_template_work:
+        type: hook
+        default_value: "{self}/resolve_template.py"
+        description: Optional hook to resolve the work_template
+
+    hook_template_publish:
+        type: hook
+        default_value: "{self}/resolve_template.py"
+        description: Optional hook to resolve the publish_template
+    ### Squeeze - End
+
     # General preferences
     #
     entities:
