@@ -235,6 +235,33 @@ class EntityTreeForm(QtGui.QWidget):
                 self._ui.entity_tree.setModel(None)
                 if isinstance(view_model, EntityTreeProxyModel):
                     view_model.setSourceModel(None)
+
+                    ### Squeeze - Begin (TDSD-5412)
+                    # Fix a performance issue when closing the UI with an active search.
+                    #
+                    # To work around GC issues,
+                    # SEE: https://github.com/shotgunsoftware/tk-framework-shotgunutils/blob/v5.8.8/python/shotgun_model/shotgun_query_model.py#L193-L199
+                    # tank widgets manually cleanup their resources when destroyed.
+                    # This includes removing the source model indexes one by one...
+                    # SEE: https://github.com/shotgunsoftware/tk-framework-shotgunutils/blob/v5.8.8/python/shotgun_model/shotgun_query_model.py#L887
+                    # Before deleting the source model indexes, it is crucial to clear HierarchicalFilteringProxyModel
+                    # internal cache which hold tons of QPersistentProxyModel based on the source model.
+                    # SEE: https://github.com/shotgunsoftware/tk-framework-qtwidgets/blob/v2.10.11/python/models/hierarchical_filtering_proxy_model.py#L94
+                    # This -seem- handled already. Before being cleared, a ShotgunQueryModel call beginResetModel.
+                    # SEE: https://github.com/shotgunsoftware/tk-framework-shotgunutils/blob/v5.8.8/python/shotgun_model/shotgun_query_model.py#L187-L190
+                    # Which HierarchicalFilteringProxyModel listen to.
+                    # SEE: https://github.com/shotgunsoftware/tk-framework-qtwidgets/blob/v2.10.11/python/models/hierarchical_filtering_proxy_model.py#L501-L506
+                    # This work in theory, however in practice, when QSortFilterProxyModel.setSourceModel is called,
+                    # SEE: https://github.com/shotgunsoftware/tk-framework-qtwidgets/blob/v2.10.11/python/models/hierarchical_filtering_proxy_model.py#L355
+                    # the filterAcceptsRow method is invoked a many times with the previous source model.
+                    # This result in the cache being re-filled after being cleard.
+                    # SEE: https://github.com/shotgunsoftware/tk-framework-qtwidgets/blob/v2.10.11/python/models/hierarchical_filtering_proxy_model.py#L319
+                    # This result in massive issues as each time an index is removed from the source model,
+                    # all QPersistentModelIndex are re-computed.
+                    # To work around this, we manually clear the cache a second time after setSourceModel is called.
+                    view_model.enable_caching(False)
+                    ### Squeeze - End (TDSD-5412)
+
         finally:
             self.blockSignals(signals_blocked)
 
