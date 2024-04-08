@@ -1,11 +1,11 @@
 # Copyright (c) 2015 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 # Metadata defining the behaviour and requirements for this app
@@ -15,6 +15,24 @@ configuration:
 
     # Startup options
     #
+
+    show_change_context:
+      type: bool
+      description: A flag to enable the context change dialog. A context change window is provided where the user
+                   can pick an entity to change context to without opening a file.
+      default_value: False
+
+    show_file_open:
+      type: bool
+      description: A flag to enable the open file dialog. A open file window is provided where the user
+        can pick an entity and select the files associated with that context to open run other actions on.
+      default_value: True
+
+    show_file_save:
+      type: bool
+      description: A flag to enable the save file dialog. A save file window is provided where the user
+        can save the current workfile to the Toolkit templated folder structure.
+      default_value: True
 
     launch_at_startup:
         type: bool
@@ -257,13 +275,13 @@ configuration:
 # the Shotgun fields that this app needs in order to operate correctly
 requires_shotgun_fields:
 
-# More verbose description of this item 
+# More verbose description of this item
 display_name: "Shotgun Workfiles"
 description: "Using this app you can browse, open and save your Work Files and Publishes."
 
 # Required minimum versions for this item to run
 requires_shotgun_version:
-requires_core_version: "v0.17.0"
+requires_core_version: "v0.19.18"
 requires_engine_version:
 
 # the engines that this app can operate in:
@@ -274,4 +292,3 @@ frameworks:
     # We need a version of tk-framework-shotgunutils with a fix for deleting items.
     - {"name": "tk-framework-shotgunutils", "version": "v5.x.x", "minimum_version": "v5.3.5"}
     - {"name": "tk-framework-qtwidgets", "version": "v2.x.x"}
-    
