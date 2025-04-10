@@ -103,7 +103,10 @@ class StepListWidget(QtCore.QObject):
             shotgun = sgtk.platform.current_bundle().shotgun
             sg_steps = shotgun.find(
                 "Step",
-                [],
+                # Squeeze
+                # Filter only pipeline steps with the active status.
+                [['sg_status', 'is', 'act']],
+                # Squeeze end
                 ["code", "entity_type", "color"],
                 order=[{"field_name": "code", "direction": "asc"}],
             )
