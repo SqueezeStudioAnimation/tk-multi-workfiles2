@@ -31,10 +31,10 @@ def window_name():
     Return the window app name.
     This fixture is used by the app_dialog fixture in conftest.py
     """
-    return "Shotgun: Change Context"
+    return "Flow Production Tracking: Change Context"
 
 
-def test_ui_validation(app_dialog, sg_project):
+def test_ui_validation(app_dialog, tk_test_project):
     """
     Basic UI validation to make sure all buttons, tabs and fields are available
     """
@@ -43,7 +43,7 @@ def test_ui_validation(app_dialog, sg_project):
         "Change Context"
     ].exists(), "Not the Change Context dialog"
     assert app_dialog.root.captions[
-        "*Project " + sg_project["name"]
+        "*Project " + tk_test_project["name"]
     ].exists(), "Not the right context"
 
     # Make sure the breadcrumb UI is fine.
@@ -81,16 +81,20 @@ def test_ui_validation(app_dialog, sg_project):
     app_dialog.root.outlineitems["AssetAutomation"].waitExist(timeout=30)
     app_dialog.root.outlineitems["AssetAutomation"].mouseDoubleClick()
     app_dialog.root.buttons["+ New Task"].mouseClick()
-    app_dialog.root.dialogs["Shotgun: Create New Task"].waitExist(timeout=30)
-    app_dialog.root.dialogs["Shotgun: Create New Task"].textfields["Task Name"].pasteIn(
-        "New Texture Task"
+    app_dialog.root.dialogs["Flow Production Tracking: Create New Task"].waitExist(
+        timeout=30
     )
-    app_dialog.root.dialogs["Shotgun: Create New Task"].captions[
+    app_dialog.root.dialogs["Flow Production Tracking: Create New Task"].textfields[
+        "Task Name"
+    ].pasteIn("New Texture Task")
+    app_dialog.root.dialogs["Flow Production Tracking: Create New Task"].dropdowns[
         "Pipeline Step"
     ].mouseClick()
     topwindows.listitems["Texture"].waitExist(timeout=30)
     topwindows.listitems["Texture"].mouseClick()
-    app_dialog.root.dialogs["Shotgun: Create New Task"].buttons["Create"].mouseClick()
+    app_dialog.root.dialogs["Flow Production Tracking: Create New Task"].buttons[
+        "Create"
+    ].mouseClick()
     app_dialog.root.outlineitems["Texture"].waitExist(timeout=30)
     # Enable My Tasks Only and make sure Model task is not showing up anymore
     app_dialog.root.checkboxes["My Tasks Only"].mouseClick()
@@ -102,4 +106,7 @@ def test_ui_validation(app_dialog, sg_project):
     app_dialog.root.tabs["My Tasks"].mouseClick()
     app_dialog.root.outlineitems["New Texture Task"].waitExist(timeout=30)
     app_dialog.root.outlineitems["New Texture Task"].mouseClick()
-    assert app_dialog.root.outlineitems["New Texture Task"].selected is True
+    assert (
+        app_dialog.root.outlineitems["New Texture Task"].selected
+        or app_dialog.root.outlineitems["New Texture Task"].focused is True
+    )

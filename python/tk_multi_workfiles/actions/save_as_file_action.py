@@ -8,8 +8,7 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-"""
-"""
+""" """
 import os
 from sgtk.platform.qt import QtCore, QtGui
 
@@ -18,17 +17,14 @@ from ..scene_operation import save_file, SAVE_FILE_AS_ACTION
 
 
 class SaveAsFileAction(FileAction):
-    """
-    """
+    """ """
 
     def __init__(self, file_item, environment):
-        """
-        """
+        """ """
         FileAction.__init__(self, "Save As", file_item, None, environment)
 
     def execute(self, parent_ui):
-        """
-        """
+        """ """
         if (
             not self.file
             or not self.file.path

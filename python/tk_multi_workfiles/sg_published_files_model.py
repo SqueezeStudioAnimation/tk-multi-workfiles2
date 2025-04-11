@@ -8,8 +8,7 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-"""
-"""
+""" """
 import sgtk
 
 shotgun_model = sgtk.platform.import_framework(
@@ -19,12 +18,10 @@ ShotgunModel = shotgun_model.ShotgunModel
 
 
 class SgPublishedFilesModel(ShotgunModel):
-    """
-    """
+    """ """
 
     def __init__(self, uid, bg_task_manager, parent):
-        """
-        """
+        """ """
         ShotgunModel.__init__(
             self, parent, download_thumbs=False, bg_task_manager=bg_task_manager
         )
@@ -45,21 +42,18 @@ class SgPublishedFilesModel(ShotgunModel):
     uid = property(_get_uid, _set_uid)
 
     def load_data(self, filters=None, fields=None):
-        """
-        """
+        """ """
         filters = filters or []
         fields = fields or ["code"]
         hierarchy = [fields[0]]
         return self._load_data(self._published_file_type, filters, hierarchy, fields)
 
     def refresh(self):
-        """
-        """
+        """ """
         self._refresh_data()
 
     def get_sg_data(self):
-        """
-        """
+        """ """
         sg_data = []
         for row in range(self.rowCount()):
             item = self.item(row, 0)

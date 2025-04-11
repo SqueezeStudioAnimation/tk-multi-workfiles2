@@ -81,7 +81,7 @@ class BrowserForm(QtGui.QWidget):
         object, object, QtCore.QPoint
     )  # file, env, pnt
     entity_type_focus_changed = QtCore.Signal(object)  # entity type
-    step_filter_changed = QtCore.Signal(list)  # SG filter
+    step_filter_changed = QtCore.Signal(list)  # PTR filter
 
     task_double_clicked = QtCore.Signal(object)  # My tasks task double clicked
 
@@ -94,10 +94,13 @@ class BrowserForm(QtGui.QWidget):
         self._enable_show_all_versions = True
 
         self._show_user_filtering_widget = False
+        self._show_check_references_widget = False
         self._file_model = None
         self._my_tasks_form = None
         self._entity_tree_forms = []
         self._file_browser_forms = []
+        self._has_item_context_menu = True
+
         # set up the UI
         self._ui = Ui_BrowserForm()
         self._ui.setupUi(self)
@@ -176,6 +179,15 @@ class BrowserForm(QtGui.QWidget):
             return False
         return file_form.publishes_visible
 
+    @property
+    def has_item_context_menu(self):
+        """Get or set the property indicating if items in the browser have a context menu to show."""
+        return self._has_item_context_menu
+
+    @has_item_context_menu.setter
+    def has_item_context_menu(self, value):
+        self._has_item_context_menu = value
+
     def enable_show_all_versions(self, enable):
         """
         Shows or hides the "Show All Versions" checkbox on all file tabs.
@@ -199,6 +211,14 @@ class BrowserForm(QtGui.QWidget):
         """
         self._show_user_filtering_widget = is_visible
 
+    def show_check_references_widget(self, is_visible):
+        """
+        Shows the check references option widget.
+
+        :param is_visible: If True, the check references checkbox will be shown.
+        """
+        self._show_check_references_widget = is_visible
+
     def set_models(self, my_tasks_model, entity_models, file_model):
         """
         Sets the models used by browser and create the widgets to display them.
@@ -219,6 +239,17 @@ class BrowserForm(QtGui.QWidget):
             self._my_tasks_form.task_double_clicked.connect(self.task_double_clicked)
             self._ui.task_browser_tabs.addTab(self._my_tasks_form, "My Tasks")
             self._my_tasks_form.create_new_task.connect(self.create_new_task)
+
+            # Task status filter
+            self.my_tasks_model = my_tasks_model
+            try:
+                self.populate_task_status_list()
+                self._my_tasks_form._ui.task_status_combo.currentTextChanged.connect(
+                    self._on_task_status_combo_changed
+                )
+            except KeyError as e:
+                logger.warning("Task Status Filter: Error loading: {}".format(e))
+                self._my_tasks_form._ui.task_status_combo.hide()
 
         for caption, step_filter_on, model in entity_models:
             step_entity_filter = None
@@ -261,7 +292,6 @@ class BrowserForm(QtGui.QWidget):
             # list of valid tabs)
             for tab in tabs_to_display:
                 if tab in self.TAB_INFO:
-
                     # extract the tab info from the lookup
                     tab_info = self.TAB_INFO[tab]
                     tab_name = tab.title()
@@ -310,13 +340,22 @@ class BrowserForm(QtGui.QWidget):
         :param show_publishes: True is this tab will show publishes.
         """
         file_form = FileListForm(
-            self, search_label, self._file_filters, show_work_files, show_publishes
+            self,
+            search_label,
+            self._file_filters,
+            show_work_files,
+            show_publishes,
+            show_item_context_menu=self.has_item_context_menu,
         )
         self._ui.file_browser_tabs.addTab(file_form, tab_name)
         file_form.enable_show_all_versions(self._enable_show_all_versions)
         # Do not show the button by default, it will be revealed when the first
         # sandbox is detected.
         file_form.show_user_filtering_widget(self._show_user_filtering_widget)
+        # Only show the option to check references on file open when we are in file open mode
+        file_form.show_check_references_on_open_widget(
+            self._show_check_references_widget
+        )
         file_form.set_model(self._file_model)
         file_form.file_selected.connect(self._on_file_selected)
         file_form.file_double_clicked.connect(self.file_double_clicked)
@@ -577,8 +616,7 @@ class BrowserForm(QtGui.QWidget):
                 form.enable_user_filtering_widget(True)
 
     def _on_file_selected(self, file, env, selection_mode):
-        """
-        """
+        """ """
         # ignore if the sender isn't the current file tab:
         if self._ui.file_browser_tabs.currentWidget() != self.sender():
             return
@@ -641,3 +679,37 @@ class BrowserForm(QtGui.QWidget):
         :param step_list: A list of Shotgun Step dictionaries.
         """
         self.step_filter_changed.emit(get_filter_from_filter_list(step_list))
+
+    # Task status filter methods
+    def populate_task_status_list(self):
+        """
+        Populate the task status list from the project schema.
+        """
+        app = sgtk.platform.current_bundle()
+        project_id = app.context.project.get("id")
+        if project_id:
+            logger.debug(
+                f"Task Status Filter: getting statuses from project {project_id}"
+            )
+            task_status_list = app.shotgun._sg.schema_field_read(
+                "Task", "sg_status_list", {"type": "Project", "id": project_id}
+            )["sg_status_list"]["properties"]["valid_values"]["value"]
+
+        task_status_list.insert(0, "ALL")
+        self._my_tasks_form._ui.task_status_combo.addItems(task_status_list)
+
+    def _on_task_status_combo_changed(self, value):
+        """
+        Called when the task status combo box is changed.
+
+        :param value: The selected value on the combo box.
+        """
+        if value == "ALL":
+            self.my_tasks_model.load_and_refresh()
+        else:
+            self.my_tasks_model.load_and_refresh(
+                extra_filter=["sg_status_list", "is", value.lower()]
+            )
+
+        self.my_tasks_model.data_refreshed.emit(True)
+        self.my_tasks_model.async_refresh()

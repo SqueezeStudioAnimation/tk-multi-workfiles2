@@ -42,7 +42,7 @@ class FileSaveForm(FileFormBase):
         """
         Construction
         """
-        super(FileSaveForm, self).__init__(parent)
+        super().__init__(parent)
 
         self._expanded_size = QtCore.QSize(930, 700)
         self._collapsed_size = None
@@ -89,7 +89,7 @@ class FileSaveForm(FileFormBase):
         """
         app = sgtk.platform.current_bundle()
 
-        super(FileSaveForm, self)._do_init()
+        super()._do_init()
 
         self._ui.preview_label.setText(
             "<p style='color:rgb%s'><b>Preview:</b></p>" % (self._preview_colour,)
@@ -145,6 +145,8 @@ class FileSaveForm(FileFormBase):
 
         # initialize the browser:
         self._ui.browser.enable_show_all_versions(False)
+        # Save form does not have context menu actions for items
+        self._ui.browser.has_item_context_menu = False
         # We don't want to see other user's sandboxes, nor do we want to save in them.
         self._ui.browser.show_user_filtering_widget(False)
         self._ui.browser.set_models(
@@ -181,8 +183,7 @@ class FileSaveForm(FileFormBase):
         )
 
     def _on_name_edited(self, txt):
-        """
-        """
+        """ """
         self._start_preview_update()
 
     def _on_name_return_pressed(self):
@@ -196,8 +197,7 @@ class FileSaveForm(FileFormBase):
         self._start_preview_update()
 
     def _on_use_next_available_version_toggled(self, checked):
-        """
-        """
+        """ """
         self._ui.version_spinner.setEnabled(not checked)
         self._start_preview_update()
 
@@ -253,8 +253,7 @@ class FileSaveForm(FileFormBase):
         )
 
     def _on_preview_generation_complete(self, task_id, group, result):
-        """
-        """
+        """ """
         if task_id != self._preview_task:
             return
         self._preview_task = None
@@ -321,8 +320,7 @@ class FileSaveForm(FileFormBase):
         self._disable_save(reason)
 
     def _on_preview_generation_failed(self, task_id, group, msg, stack_trace):
-        """
-        """
+        """ """
         if task_id != self._preview_task:
             return
         self._preview_task = None
@@ -441,8 +439,7 @@ class FileSaveForm(FileFormBase):
         return {"path": path, "version": version, "next_version": next_version}
 
     def _update_version_spinner(self, version, min_version, block_signals=True):
-        """
-        """
+        """ """
         signals_blocked = self._ui.version_spinner.blockSignals(block_signals)
         try:
             self._ui.version_spinner.setMinimum(min_version)
@@ -451,8 +448,7 @@ class FileSaveForm(FileFormBase):
             self._ui.version_spinner.blockSignals(signals_blocked)
 
     def _update_extension_menu(self, ext, block_signals=True):
-        """
-        """
+        """ """
         signals_blocked = self._ui.file_type_menu.blockSignals(block_signals)
         try:
             if ext in self._extension_choices:
@@ -463,8 +459,7 @@ class FileSaveForm(FileFormBase):
             self._ui.file_type_menu.blockSignals(signals_blocked)
 
     def _populate_extension_menu(self, extensions, block_signals=True):
-        """
-        """
+        """ """
         signals_blocked = self._ui.file_type_menu.blockSignals(block_signals)
         try:
             self._ui.file_type_menu.clear()
@@ -475,8 +470,7 @@ class FileSaveForm(FileFormBase):
             self._ui.file_type_menu.blockSignals(signals_blocked)
 
     def _on_browser_file_selected(self, file, env):
-        """
-        """
+        """ """
         if env != None:
             self._on_work_area_changed(env)
 
@@ -484,8 +478,7 @@ class FileSaveForm(FileFormBase):
         self._start_preview_update()
 
     def _on_browser_file_double_clicked(self, file, env):
-        """
-        """
+        """ """
         self._on_browser_file_selected(file, env)
         # TODO: this won't actually work until the preview has
         # been updated!
@@ -516,8 +509,7 @@ class FileSaveForm(FileFormBase):
         self._ui.breadcrumbs.set(breadcrumbs)
 
     def _on_selected_file_changed(self, file):
-        """
-        """
+        """ """
         if not self._current_env or not self._current_env.work_template or not file:
             return
 
@@ -579,8 +571,7 @@ class FileSaveForm(FileFormBase):
             self._update_version_spinner(version_to_set, version + 1)
 
     def _on_work_area_changed(self, env):
-        """
-        """
+        """ """
         if env and self._current_env and env.context == self._current_env.context:
             # nothing changed so nothing to do here!
             return
@@ -640,8 +631,7 @@ class FileSaveForm(FileFormBase):
             self._ui.use_next_available_cb.setVisible(version_is_used)
 
     def _on_expand_toggled(self, checked):
-        """
-        """
+        """ """
         if checked:
             if self._collapsed_size == None:
                 # keep track of the collapsed size the first time it's resized:
@@ -673,8 +663,7 @@ class FileSaveForm(FileFormBase):
             self.window().resize(self._collapsed_size)
 
     def _on_save(self):
-        """
-        """
+        """ """
         app = sgtk.platform.current_bundle()
         if not self._current_env:
             return
@@ -797,6 +786,21 @@ class FileSaveForm(FileFormBase):
         file_saved = action.execute(self)
 
         if file_saved:
+            # Execute hook for saving additional user login.
+            try:
+                result = app.execute_hook_method(
+                    "user_login_hook",
+                    "save_user",
+                    work_path=path_to_save,
+                    work_version=version_to_save,
+                )
+            except Exception:
+                app.logger.warning(
+                    "Exception raised when executing save hook for work file at %s"
+                    % path_to_save,
+                    exc_info=True,
+                )
+
             # all good - lets close the dialog
             self._exit_code = QtGui.QDialog.Accepted
             self.close()

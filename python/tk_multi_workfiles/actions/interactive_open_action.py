@@ -8,10 +8,8 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-"""
-"""
+""" """
 import sgtk
-from tank_vendor import six
 from sgtk.platform.qt import QtCore, QtGui
 
 from .open_file_action import OpenFileAction
@@ -25,16 +23,14 @@ class InteractiveOpenAction(OpenFileAction):
     def __init__(
         self, file, file_versions, environment, workfiles_visible, publishes_visible
     ):
-        """
-        """
+        """ """
         OpenFileAction.__init__(self, "Open", file, file_versions, environment)
 
         self._workfiles_visible = workfiles_visible
         self._publishes_visible = publishes_visible
 
     def execute(self, parent_ui):
-        """
-        """
+        """ """
         if not self.file:
             return False
 
@@ -43,10 +39,8 @@ class InteractiveOpenAction(OpenFileAction):
         # print "Opening file '%s' which is in user sandbox '%s'" % (self.file.path, self.environment.context.user["name"])
 
         # get information about the max local & publish versions:
-        local_versions = [v for v, f in six.iteritems(self.file_versions) if f.is_local]
-        publish_versions = [
-            v for v, f in six.iteritems(self.file_versions) if f.is_published
-        ]
+        local_versions = [v for v, f in self.file_versions.items() if f.is_local]
+        publish_versions = [v for v, f in self.file_versions.items() if f.is_published]
         max_local_version = max(local_versions) if local_versions else None
         max_publish_version = max(publish_versions) if publish_versions else None
         max_version = max(0, max_local_version or 0, max_publish_version or 0)
@@ -176,7 +170,13 @@ class InteractiveOpenAction(OpenFileAction):
             return False
 
         return self._do_copy_and_open(
-            None, file.path, file.version, False, env.context, parent_ui
+            None,
+            file.path,
+            file.version,
+            False,
+            env.context,
+            parent_ui,
+            check_refs=True,
         )
 
     def _open_publish_with_check(
@@ -317,7 +317,13 @@ class InteractiveOpenAction(OpenFileAction):
                     work_path = local_path
 
         return self._do_copy_and_open(
-            src_path, work_path, None, not file.editable, env.context, parent_ui
+            src_path,
+            work_path,
+            None,
+            not file.editable,
+            env.context,
+            parent_ui,
+            check_refs=True,
         )
 
     def _open_previous_publish(self, file, env, parent_ui):
@@ -346,6 +352,7 @@ class InteractiveOpenAction(OpenFileAction):
             read_only=True,
             new_ctx=env.context,
             parent_ui=parent_ui,
+            check_refs=False,
         )
 
     def _open_publish_read_only(self, file, env, parent_ui):
@@ -361,6 +368,7 @@ class InteractiveOpenAction(OpenFileAction):
             read_only=True,
             new_ctx=env.context,
             parent_ui=parent_ui,
+            check_refs=False,
         )
 
     def _open_publish_as_workfile(self, file, env, new_version, parent_ui):
@@ -439,5 +447,11 @@ class InteractiveOpenAction(OpenFileAction):
                 return False
 
         return self._do_copy_and_open(
-            src_path, work_path, None, not file.editable, env.context, parent_ui
+            src_path,
+            work_path,
+            None,
+            not file.editable,
+            env.context,
+            parent_ui,
+            check_refs=True,
         )

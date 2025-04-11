@@ -1,4 +1,3 @@
-from __future__ import print_function
 import sgtk
 from sgtk.platform.qt import QtGui
 
@@ -141,8 +140,7 @@ class CrashDbgForm(QtGui.QWidget):
             thread.start()
 
     def closeEvent(self, event):
-        """
-        """
+        """ """
         for thread in self._sg_runner_threads:
             print("Stopping sg runner thread...")
             thread.stop()
@@ -156,8 +154,7 @@ class CrashDbgForm(QtGui.QWidget):
         return QtGui.QWidget.closeEvent(self, event)
 
     def _on_refresh_triggered(self):
-        """
-        """
+        """ """
         # time.sleep(0.1)
         self._model.clear()
         self._repopulate_model()
@@ -165,8 +162,7 @@ class CrashDbgForm(QtGui.QWidget):
         self._repopulate_model()
 
     def _update_groups(self, group_names):
-        """
-        """
+        """ """
         new_items = []
         for name in group_names:
             group_item = QtGui.QStandardItem(name)
@@ -176,15 +172,13 @@ class CrashDbgForm(QtGui.QWidget):
             self._model.invisibleRootItem().appendRows(new_items)
 
     def _add_group(self, group_name):
-        """
-        """
+        """ """
         group_item = QtGui.QStandardItem(group_name)
         self._model.invisibleRootItem().appendRow(group_item)
         return group_item
 
     def _add_files(self, group_item, file_names):
-        """
-        """
+        """ """
         new_items = []
         for name in file_names:
             item = QtGui.QStandardItem(name)
@@ -194,8 +188,7 @@ class CrashDbgForm(QtGui.QWidget):
             group_item.appendRows(new_items)
 
     def _repopulate_model(self):
-        """
-        """
+        """ """
         search_id = random.randint(0, 19)
         if search_id == 0:
             self._update_groups(["Sequence 01"])

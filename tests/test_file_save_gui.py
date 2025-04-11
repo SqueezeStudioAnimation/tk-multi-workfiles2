@@ -32,10 +32,10 @@ def window_name():
     Return the window app name.
     This fixture is used by the app_dialog fixture in conftest.py
     """
-    return "Shotgun: File Save"
+    return "Flow Production Tracking: File Save"
 
 
-def test_my_tasks(app_dialog, sg_project):
+def test_my_tasks(app_dialog, tk_test_project):
     """
     Basic My Tasks tab UI validation to make sure all buttons, tabs and fields are available
     """
@@ -43,16 +43,16 @@ def test_my_tasks(app_dialog, sg_project):
     assert app_dialog.root.captions["File Save"].exists(), "Not the File Open dialog"
 
     # Validate File Save dialog buttons
-    assert app_dialog.root.buttons["Open"].exists(), "Open file type button is missing"
+    assert app_dialog.root.dropdowns[
+        "File Type"
+    ].exists(), "Open file type drop down menu is missing"
     assert app_dialog.root.buttons["Save"].exists(), "Save button is missing"
 
     # Validate File Save dialog text fields
     assert app_dialog.root.textfields[
         "Name Edit"
     ].exists(), "Name text field is missing"
-    assert app_dialog.root.textfields[
-        "Version Number"
-    ].exists(), "Version text field is missing"
+    assert app_dialog.root["Version Number"].exists(), "Version text field is missing"
 
     # Validate File Save dialog checkboxes
     assert app_dialog.root.checkboxes[
@@ -63,7 +63,7 @@ def test_my_tasks(app_dialog, sg_project):
     ].checked, "Use Next Available Version Number checkbox should be checked by default"
 
     # My Tasks tab general UI validation
-    _test_my_tasks_tab(app_dialog, sg_project)
+    _test_my_tasks_tab(app_dialog, tk_test_project)
 
 
 # Parametrize decorator to run the same functions for Assets and Shots tabs.

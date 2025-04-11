@@ -98,7 +98,7 @@ class MultiWorkFiles(sgtk.platform.Application):
         # the behaviour can be very different.
         #
         # currently, we have done QA on the following engines:
-        SUPPORTED_ENGINES = ["tk-nuke", "tk-maya", "tk-3dsmax", "tk-katana", "tk-motionbuilder", "tk-alias", "tk-vred"]
+        SUPPORTED_ENGINES = ["tk-nuke", "tk-maya", "tk-3dsmax"]
 
         if not hasattr(sgtk, "_tk_multi_workfiles2_launch_at_startup"):
 
@@ -191,31 +191,31 @@ class DebugWrapperShotgun(object):
         self.config = sg_instance.config
 
     def find(self, *args, **kwargs):
-        self._log_fn("SG API find start: %s %s" % (args, kwargs))
+        self._log_fn("PTR API find start: %s %s" % (args, kwargs))
         data = self._sg.find(*args, **kwargs)
-        self._log_fn("SG API find end")
+        self._log_fn("PTR API find end")
         return data
 
     def find_one(self, *args, **kwargs):
-        self._log_fn("SG API find_one start: %s %s" % (args, kwargs))
+        self._log_fn("PTR API find_one start: %s %s" % (args, kwargs))
         data = self._sg.find_one(*args, **kwargs)
-        self._log_fn("SG API find_one end")
+        self._log_fn("PTR API find_one end")
         return data
 
     def create(self, *args, **kwargs):
-        self._log_fn("SG API create start: %s %s" % (args, kwargs))
+        self._log_fn("PTR API create start: %s %s" % (args, kwargs))
         data = self._sg.create(*args, **kwargs)
-        self._log_fn("SG API create end")
+        self._log_fn("PTR API create end")
         return data
 
     def update(self, *args, **kwargs):
-        self._log_fn("SG API update start: %s %s" % (args, kwargs))
+        self._log_fn("PTR API update start: %s %s" % (args, kwargs))
         data = self._sg.update(*args, **kwargs)
-        self._log_fn("SG API update end")
+        self._log_fn("PTR API update end")
         return data
 
     def insert(self, *args, **kwargs):
-        self._log_fn("SG API insert start: %s %s" % (args, kwargs))
+        self._log_fn("PTR API insert start: %s %s" % (args, kwargs))
         data = self._sg.insert(*args, **kwargs)
-        self._log_fn("SG API insert end")
+        self._log_fn("PTR API insert end")
         return data
