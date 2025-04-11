@@ -106,15 +106,17 @@ class StepListWidget(QtCore.QObject):
             shotgun = sgtk.platform.current_bundle().shotgun
             sg_steps = shotgun.find(
                 "Step",
-                [],
-                ["code", "entity_type", "color", "sg_status"],
+                # Squeeze
+                # Filter only pipeline steps with the active status.
+                [['sg_status', 'is', 'act']],
+                # Squeeze end
+                ["code", "entity_type", "color"],
                 order=[{"field_name": "code", "direction": "asc"}],
             )
             # Build a dictionary for indexing by the entity_type
             cls._step_list = defaultdict(list)
             for sg_step in sg_steps:
-                if sg_step['sg_status'] == 'act':
-                    cls._step_list[sg_step["entity_type"]].append(sg_step)
+                cls._step_list[sg_step["entity_type"]].append(sg_step)
 
     def select_all_steps(self, value=True):
         """
