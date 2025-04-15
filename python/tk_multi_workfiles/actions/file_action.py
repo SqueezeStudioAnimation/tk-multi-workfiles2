@@ -8,8 +8,7 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-"""
-"""
+""" """
 import os
 
 import sgtk
@@ -19,8 +18,7 @@ from .action import Action
 
 
 class FileAction(Action):
-    """
-    """
+    """ """
 
     @staticmethod
     def create_folders(ctx):
@@ -155,8 +153,7 @@ class FileAction(Action):
             app.log_exception("Failed to change the work area back to %s!" % ctx)
 
     def __init__(self, label, file, file_versions, environment):
-        """
-        """
+        """ """
         Action.__init__(self, label)
         self._file = file
         self._file_versions = file_versions

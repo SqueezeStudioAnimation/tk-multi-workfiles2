@@ -32,10 +32,10 @@ def window_name():
     Return the window app name.
     This fixture is used by the app_dialog fixture in conftest.py
     """
-    return "Shotgun: File Open"
+    return "Flow Production Tracking: File Open"
 
 
-def test_my_tasks(app_dialog, sg_project):
+def test_my_tasks(app_dialog, tk_test_project):
     """
     Basic My Tasks tab UI validation to make sure all buttons, tabs and fields are available
     """
@@ -54,7 +54,7 @@ def test_my_tasks(app_dialog, sg_project):
     ].exists(), "All Versions checkbox is missing"
 
     # My Tasks tab general UI validation
-    _test_my_tasks_tab(app_dialog, sg_project)
+    _test_my_tasks_tab(app_dialog, tk_test_project)
 
 
 # Parametrize decorator to run the same functions for Assets and Shots tabs.

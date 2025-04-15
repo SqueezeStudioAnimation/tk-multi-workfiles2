@@ -8,12 +8,10 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-"""
-"""
+""" """
 import sgtk
 from sgtk.platform.qt import QtCore, QtGui
 from sgtk import TankError
-from tank_vendor import six
 
 from .open_file_action import (
     OpenFileAction,
@@ -25,13 +23,11 @@ from ..user_cache import g_user_cache
 
 
 class OpenPublishAction(OpenFileAction):
-    """
-    """
+    """ """
 
     def __init__(self, file, file_versions, environment):
-        """
-        """
-        all_versions = [v for v, f in six.iteritems(file_versions)]
+        """ """
+        all_versions = [v for v, f in file_versions.items()]
         max_version = max(all_versions) if all_versions else 0
 
         label = ""
@@ -43,8 +39,7 @@ class OpenPublishAction(OpenFileAction):
         OpenFileAction.__init__(self, label, file, file_versions, environment)
 
     def execute(self, parent_ui):
-        """
-        """
+        """ """
         if not self.file or not self.file.is_published:
             return False
 
@@ -55,23 +50,21 @@ class OpenPublishAction(OpenFileAction):
             read_only=self.file.editable,
             new_ctx=self.environment.context,
             parent_ui=parent_ui,
+            check_refs=False,
         )
 
 
 class ContinueFromPublishAction(ContinueFromFileAction):
-    """
-    """
+    """ """
 
     def __init__(self, file, file_versions, environment):
-        """
-        """
+        """ """
         ContinueFromFileAction.__init__(
             self, "Continue Working From Publish", file, file_versions, environment
         )
 
     def execute(self, parent_ui):
-        """
-        """
+        """ """
         if not self.file.is_published or not self.environment.publish_template:
             return False
 
@@ -84,8 +77,7 @@ class ContinueFromPublishAction(ContinueFromFileAction):
 
 
 class CopyAndOpenPublishInCurrentWorkAreaAction(CopyAndOpenInCurrentWorkAreaAction):
-    """
-    """
+    """ """
 
     def __init__(self, file, file_versions, environment):
         CopyAndOpenInCurrentWorkAreaAction.__init__(
@@ -97,8 +89,7 @@ class CopyAndOpenPublishInCurrentWorkAreaAction(CopyAndOpenInCurrentWorkAreaActi
         )
 
     def execute(self, parent_ui):
-        """
-        """
+        """ """
         if (
             not self.file
             or not self.file.is_published

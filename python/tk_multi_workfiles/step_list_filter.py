@@ -64,7 +64,7 @@ class StepListWidget(QtCore.QObject):
     """
 
     _step_list = None
-    step_filter_changed = QtCore.Signal(object)  # List of SG step dictionaries
+    step_filter_changed = QtCore.Signal(object)  # List of PTR step dictionaries
 
     def __init__(self, list_widget):
         """
@@ -76,7 +76,7 @@ class StepListWidget(QtCore.QObject):
                             hidden when showing steps for a given Entity type is
                             needed or not needed.
         """
-        super(StepListWidget, self).__init__()
+        super().__init__()
         self._list_widget = list_widget
         self._cache_step_list()
         self._step_widgets = defaultdict(list)
@@ -106,15 +106,17 @@ class StepListWidget(QtCore.QObject):
             shotgun = sgtk.platform.current_bundle().shotgun
             sg_steps = shotgun.find(
                 "Step",
-                [],
-                ["code", "entity_type", "color", "sg_status"],
+                # Squeeze
+                # Filter only pipeline steps with the active status.
+                [['sg_status', 'is', 'act']],
+                # Squeeze end
+                ["code", "entity_type", "color"],
                 order=[{"field_name": "code", "direction": "asc"}],
             )
             # Build a dictionary for indexing by the entity_type
             cls._step_list = defaultdict(list)
             for sg_step in sg_steps:
-                if sg_step['sg_status'] == 'act':
-                    cls._step_list[sg_step["entity_type"]].append(sg_step)
+                cls._step_list[sg_step["entity_type"]].append(sg_step)
 
     def select_all_steps(self, value=True):
         """
